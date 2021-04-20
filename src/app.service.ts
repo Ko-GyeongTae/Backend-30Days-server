@@ -19,7 +19,7 @@ export class AppService {
     const token = request.header;
     console.log(req);
     console.log(token);
-    
+
     await getConnection()
       .createQueryBuilder()
       .insert()
@@ -35,16 +35,39 @@ export class AppService {
   async signUp(request): Promise<string> {
     const req = request.body;
     console.log(req);
-
-    await getConnection()
+    const check = await getConnection()
       .createQueryBuilder()
-      .insert()
-      .into(User)
-      .values({ name: req.name, password: req.password })
-      .execute()
-      .catch(Error => {
-        return "Fail to signup";
-      });
-    return "Success to signup";
+      .select("user")
+      .from(User, "user")
+      .where("user.name = :name", { name: req.name })
+      .getOne();
+    if (check === undefined) {
+      await getConnection()
+        .createQueryBuilder()
+        .insert()
+        .into(User)
+        .values({ name: req.name, password: req.password })
+        .execute()
+        .catch(Error => {
+          return "Fail to signup";
+        });
+      return "Success to signup";
+    } else {
+      return "Same name is already exist!";
+    }
+  }
+
+  async signIn(request): Promise<string> {
+    const req = request.body;
+    console.log(req);
+
+    const user = await getConnection()
+      .createQueryBuilder()
+      .select("user")
+      .from(User, "user")
+      .where("user.password = :password && user.name = :name", { password: req.password, name: req.name })
+      .getOne();
+    console.log(user);
+    return "login";
   }
 }

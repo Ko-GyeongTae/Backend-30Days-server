@@ -25,4 +25,9 @@ export class AppController {
   signUp(@Req() request: Request):Promise<string> {
     return this.appService.signUp(request);
   }
+
+  @Post('login')
+  signIn(@Req() request: Request):Promise<string> {
+    return this.appService.signIn(request);
+  }
 }
