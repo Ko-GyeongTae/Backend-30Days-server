@@ -12,7 +12,11 @@ async function bootstrap() {
     port: 3306,
     username: process.env.DB_USERNAME,
     password: process.env.DB_PASSWORD,
-    database: "diary"
+    database: "diary",
+    synchronize: true,
+    entities: [
+      __dirname + "/entity/*.{js,ts}" //Entity 경로 설정
+    ]
   }).then(() => { 
     console.log("Connect to DB successfullly!") 
   })
