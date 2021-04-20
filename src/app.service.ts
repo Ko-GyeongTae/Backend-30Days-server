@@ -1,10 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { getConnection } from 'typeorm';
 import { Post } from './entity/Diary';
 import { User } from './entity/User';
 
 @Injectable()
 export class AppService {
+  private logger = new Logger();
   getHello(): string {
     return 'Hello World!';
   }
@@ -17,9 +18,7 @@ export class AppService {
   async writeDiary(request): Promise<string> {
     const req = request.body;
     const token = request.header;
-    console.log(req);
-    console.log(token);
-
+    //token 기능 추가
     await getConnection()
       .createQueryBuilder()
       .insert()
@@ -27,14 +26,15 @@ export class AppService {
       .values({ title: req.title, content: req.content })
       .execute()
       .catch(Error => {
+        this.logger.log(`Fail to write Diary`);
         return "Fail to write Diary";
       });
+    this.logger.log(`Success to write Diary Title: ${req.title}`);
     return 'Success to write Diary';
   }
 
   async signUp(request): Promise<string> {
     const req = request.body;
-    console.log(req);
     const check = await getConnection()
       .createQueryBuilder()
       .select("user")
@@ -49,17 +49,19 @@ export class AppService {
         .values({ name: req.name, password: req.password })
         .execute()
         .catch(Error => {
+          this.logger.log(`Fail to signup User: ${req.name}`);
           return "Fail to signup";
         });
+      this.logger.log(`Success to signup User: ${req.name}`);
       return "Success to signup";
     } else {
+      this.logger.log("Same name is already exist!");
       return "Same name is already exist!";
     }
   }
 
   async signIn(request): Promise<string> {
     const req = request.body;
-    console.log(req);
 
     const user = await getConnection()
       .createQueryBuilder()
@@ -67,7 +69,8 @@ export class AppService {
       .from(User, "user")
       .where("user.password = :password && user.name = :name", { password: req.password, name: req.name })
       .getOne();
-    console.log(user);
+    this.logger.log(`${request.method} : ${request.url} : ${req.name}`);
     return "login";
+    //토큰 기능 추가
   }
 }
