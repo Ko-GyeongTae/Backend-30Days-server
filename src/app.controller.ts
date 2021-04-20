@@ -1,5 +1,5 @@
 import { Controller, Get, Post, Req } from '@nestjs/common';
-import { Request } from 'express';
+import { request, Request } from 'express';
 import { AppService } from './app.service';
 
 @Controller()
@@ -17,7 +17,12 @@ export class AppController {
   }
 
   @Post('write')
-  async writeDiary(@Req() request: Request){
+  writeDiary(@Req() request: Request):Promise<string> {
     return this.appService.writeDiary(request);
+  }
+
+  @Post('signup')
+  signUp(@Req() request: Request):Promise<string> {
+    return this.appService.signUp(request);
   }
 }
