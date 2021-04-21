@@ -6,7 +6,7 @@ export class Post {
   @PrimaryGeneratedColumn('increment')
   num: number;
 
-  @Column({ nullable: true })
+  @Column()
   userUid: string;
 
   @Column()

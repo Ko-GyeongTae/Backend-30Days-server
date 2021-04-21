@@ -30,17 +30,21 @@ export class AppService {
 
   async writeDiary(request): Promise<string> {
     const req = request.body;
-    const token = request.header;
-    //token 기능 추가
+    const cookie = request.cookies['jwt'];
+    if(!cookie){
+      throw new HttpException('Not found Authorization', 400);
+    }
+    const data = await this.jwtService.verifyAsync(cookie);
     await getConnection()
       .createQueryBuilder()
       .insert()
       .into(Post)
-      .values({ title: req.title, content: req.content })
+      .values({ userUid: data.id, title: req.title, content: req.content })
       .execute()
       .catch(Error => {
+        console.log(Error);
         this.logger.log(`Fail to write Diary`);
-        return "Fail to write Diary";
+        throw new HttpException(`Fail to write Diary`, 400);
       });
     this.logger.log(`Success to write Diary Title: ${req.title}`);
     return 'Success to write Diary';
