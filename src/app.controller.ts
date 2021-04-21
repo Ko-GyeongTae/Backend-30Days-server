@@ -1,16 +1,12 @@
-import { Body, Controller, Get, Post, Req, Res, UseGuards } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
+import { Controller, Get, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { AppService } from './app.service';
-import { User } from './entity/User';
-import { Token } from './lib/user.decorator';
 //import AuthGuard from './middleware/auth';
 
 @Controller()
 export class AppController {
   constructor(
     private readonly appService: AppService,
-    private readonly jwtService: JwtService
   ) {}
 
   @Get()
@@ -42,7 +38,7 @@ export class AppController {
   @Post('login')
   signIn(
     @Req() request: Request,
-    @Res({passthrough: true}) response: Response
+    @Res() response: Response
   ):Promise<Object> {
     return this.appService.signIn(request, response);
   }

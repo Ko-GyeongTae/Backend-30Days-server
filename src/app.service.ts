@@ -1,6 +1,5 @@
 import { BadRequestException, HttpException, Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { response } from 'express';
 import { getConnection } from 'typeorm';
 import { Post } from './entity/Diary';
 import { User } from './entity/User';
@@ -9,29 +8,39 @@ import { User } from './entity/User';
 export class AppService {
   constructor(
     private readonly jwtService: JwtService
-  ) {}
+  ) { }
   private logger = new Logger();
   getHello(): string {
     return 'Hello World!';
   }
 
   async getDiary(request): Promise<object> {
-    try{
+    try {
       const cookie = request.cookies['jwt'];
       const data = await this.jwtService.verifyAsync(cookie);
-      if(!data){
+      console.log(data);
+      if (data === undefined) {
         throw new UnauthorizedException();
       }
-      return data;
-    } catch(e) {
-      throw new UnauthorizedException();
+      const diary = await getConnection()
+        .createQueryBuilder()
+        .select('post')
+        .from(Post, 'post')
+        .where('post.userUid = :userUid', { userUid: data.id })
+        .getMany();
+      if (diary.length === 0) {
+        throw new HttpException('Not Found', 404);
+      }
+      return diary;
+    } catch (e) {
+      throw new HttpException("Fail to get diary list", 404);
     }
   }
 
   async writeDiary(request): Promise<string> {
     const req = request.body;
     const cookie = request.cookies['jwt'];
-    if(!cookie){
+    if (!cookie) {
       throw new HttpException('Not found Authorization', 400);
     }
     const data = await this.jwtService.verifyAsync(cookie);
@@ -93,16 +102,16 @@ export class AppService {
       .where("user.password = :password && user.name = :name", { password: req.password, name: req.name })
       .getOne();
     this.logger.log(`${request.method} : ${request.url} : ${req.name}`);
-    if(!user){
+    if (!user) {
       throw new BadRequestException('invalid credentials');
-    } else {
-      const jwt = await this.jwtService.signAsync({ id: user.uid, name: user.name });
-      //response.cookie('jwt', jwt, {httpOnly: true});
-      return response.status(200).json({
-        status: 200,
-        message: 'Success to login',
-        access_token: jwt,
-      });
     }
+    const jwt = await this.jwtService.signAsync({ id: user.uid, name: user.name });
+    response.cookie('jwt', jwt, { httpOnly: false });
+    return response.status(200).json({
+      status: 200,
+      message: 'Success to login',
+      access_token: jwt,
+    });
+
   }
 }
