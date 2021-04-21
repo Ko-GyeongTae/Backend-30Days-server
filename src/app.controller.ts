@@ -1,12 +1,17 @@
 import { Body, Controller, Get, Post, Req, Res, UseGuards } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { Request, Response } from 'express';
 import { AppService } from './app.service';
 import { User } from './entity/User';
 import { Token } from './lib/user.decorator';
+//import AuthGuard from './middleware/auth';
 
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService) {}
+  constructor(
+    private readonly appService: AppService,
+    private readonly jwtService: JwtService
+  ) {}
 
   @Get()
   getHello(): string {
@@ -14,8 +19,10 @@ export class AppController {
   }
 
   @Get('diary')
-  getDiary(): string {
-    return this.appService.getDiary();
+  getDiary(
+    @Req() request: Request
+  ):Promise<object> {
+    return this.appService.getDiary(request);
   }
 
   @Post('write')
@@ -25,7 +32,6 @@ export class AppController {
   }
 
   @Post('signup')
-  //@UseGuards(new AuthGuard())
   signUp(
     @Req() request: Request,
     @Res() response: Response
@@ -36,7 +42,7 @@ export class AppController {
   @Post('login')
   signIn(
     @Req() request: Request,
-    @Res() response: Response
+    @Res({passthrough: true}) response: Response
   ):Promise<Object> {
     return this.appService.signIn(request, response);
   }
