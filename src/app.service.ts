@@ -1,4 +1,5 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { HttpException, Injectable, Logger } from '@nestjs/common';
+import { response } from 'express';
 import { getConnection } from 'typeorm';
 import { Post } from './entity/Diary';
 import { User } from './entity/User';
@@ -33,7 +34,7 @@ export class AppService {
     return 'Success to write Diary';
   }
 
-  async signUp(request): Promise<string> {
+  async signUp(request, response): Promise<string> {
     const req = request.body;
     const check = await getConnection()
       .createQueryBuilder()
@@ -50,17 +51,23 @@ export class AppService {
         .execute()
         .catch(Error => {
           this.logger.log(`Fail to signup User: ${req.name}`);
-          return "Fail to signup";
+          return new HttpException('Fail to signup', 400);
         });
       this.logger.log(`Success to signup User: ${req.name}`);
-      return "Success to signup";
+      return response.status(200).json({
+        status: 200,
+        message: "Success to signup"
+      })
     } else {
       this.logger.log("Same name is already exist!");
-      return "Same name is already exist!";
+      return response.status(400).json({
+        status: 400,
+        message: "Same name is already exist!"
+      });
     }
   }
 
-  async signIn(request): Promise<string> {
+  async signIn(request, response): Promise<Object> {
     const req = request.body;
 
     const user = await getConnection()
@@ -70,7 +77,14 @@ export class AppService {
       .where("user.password = :password && user.name = :name", { password: req.password, name: req.name })
       .getOne();
     this.logger.log(`${request.method} : ${request.url} : ${req.name}`);
-    return "login";
-    //토큰 기능 추가
+    if(user){
+
+    }
+    return response.status(200).json({
+      status: 200,
+      message: 'Success to login',
+      access_token: 'AAAAAAAAA',
+      refresh_token: 'BBBBBBBBB'
+    });
   }
 }
