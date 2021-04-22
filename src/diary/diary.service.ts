@@ -1,4 +1,4 @@
-import { BadRequestException, HttpException, Injectable, Logger, UnauthorizedException } from '@nestjs/common';
+import { HttpException, Injectable, Logger, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { getConnection } from 'typeorm';
 import { Post } from '../entity/Diary';
@@ -7,13 +7,13 @@ import { Post } from '../entity/Diary';
 export class DiaryService {
     constructor(
         private readonly jwtService: JwtService
-    ) {}
+    ) { }
     private logger = new Logger();
-    async getDiary(request): Promise<object> {
+    async getDiary(request, response): Promise<object> {
         try {
             const cookie = request.cookies['jwt'];
             const data = await this.jwtService.verifyAsync(cookie);
-            if (data === undefined) {
+            if (!data) {
                 throw new UnauthorizedException();
             }
             const diary = await getConnection()
@@ -23,19 +23,24 @@ export class DiaryService {
                 .where('post.userUid = :userUid', { userUid: data.id })
                 .getMany();
             if (diary.length === 0) {
-                throw new HttpException('Not Found', 404);
+                throw new NotFoundException();
             }
-            return diary;
+            this.logger.log(`Success to get list User: ${data.name}`);
+            return response.status(200).json({
+                status: 200,
+                totalCount: diary.length,
+                data: diary
+            });
         } catch (e) {
-            throw new HttpException("Fail to get diary list", 404);
+            throw new NotFoundException();
         }
     }
 
-    async writeDiary(request): Promise<string> {
+    async writeDiary(request, response): Promise<string> {
         const req = request.body;
         const cookie = request.cookies['jwt'];
         if (!cookie) {
-            throw new HttpException('Not found Authorization', 400);
+            throw new UnauthorizedException();
         }
         const data = await this.jwtService.verifyAsync(cookie);
         await getConnection()
@@ -50,7 +55,9 @@ export class DiaryService {
                 throw new HttpException(`Fail to write Diary`, 400);
             });
         this.logger.log(`Success to write Diary Title: ${req.title}`);
-        return 'Success to write Diary';
+        return response.status(201).json({
+            status: 201,
+            message: 'Success to write Diary'
+        });
     }
-
 }

@@ -3,8 +3,8 @@ import {Entity, PrimaryGeneratedColumn, Column} from "typeorm";
 @Entity()
 export class Post {
 
-  @PrimaryGeneratedColumn('increment')
-  num: number;
+  @PrimaryGeneratedColumn('uuid')
+  postUid: string;
 
   @Column()
   userUid: string;

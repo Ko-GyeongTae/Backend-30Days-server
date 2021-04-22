@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Req, Res, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Req, Res } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { DiaryService } from './diary.service';
 
@@ -9,13 +9,17 @@ export class DiaryController {
     ) { }
     @Get('list')
     getDiary(
-        @Req() request: Request
+        @Req() request: Request,
+        @Res() response: Response
     ): Promise<object> {
-        return this.diaryService.getDiary(request);
+        return this.diaryService.getDiary(request, response);
     }
 
     @Post('write')
-    writeDiary(@Req() request: Request): Promise<string> {
-        return this.diaryService.writeDiary(request);
+    writeDiary(
+        @Req() request: Request,
+        @Res() response: Response
+    ): Promise<string> {
+        return this.diaryService.writeDiary(request, response);
     }
 }
