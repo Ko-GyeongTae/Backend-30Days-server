@@ -1,4 +1,4 @@
-import { BadRequestException, HttpException, Injectable, Logger, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, HttpException, Injectable, Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { getConnection } from 'typeorm';
 import { User } from '../entity/User';
@@ -18,7 +18,15 @@ export class AuthService {
             .from(User, "user")
             .where("user.name = :name", { name: req.name })
             .getOne();
-        if (check === undefined) {
+        if(check){
+            this.logger.log("Same name is already exist!");
+            throw new BadRequestException();
+        }
+        if (!check) {
+            if(!req.password){
+                this.logger.log("Password is not exits!");
+                throw new BadRequestException();
+            }
             await getConnection()
                 .createQueryBuilder()
                 .insert()
@@ -34,12 +42,6 @@ export class AuthService {
                 status: 200,
                 message: "Success to signup"
             })
-        } else {
-            this.logger.log("Same name is already exist!");
-            return response.status(400).json({
-                status: 400,
-                message: "Same name is already exist!"
-            });
         }
     }
 
@@ -57,7 +59,7 @@ export class AuthService {
             throw new BadRequestException('invalid credentials');
         }
         const jwt = await this.jwtService.signAsync({ id: user.uid, name: user.name });
-        response.cookie('jwt', jwt, { httpOnly: false });
+        response.cookie('jwt', jwt, { httpOnly: true });
         return response.status(200).json({
             status: 200,
             message: 'Success to login',
