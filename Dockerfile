@@ -15,5 +15,7 @@ FROM node:15-alpine
 WORKDIR /app
 ## Step 1의 builder에서 build된 프로젝트를 가져온다
 COPY --from=builder /app ./
+
+EXPOSE 5000
 ## application 실행
 CMD ["yarn", "start"]
