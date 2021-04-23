@@ -9,7 +9,7 @@ import { User } from '../entity/User';
 export class AuthService {
     constructor(
         private readonly jwtService: JwtService
-    ) {}
+    ) { }
     private logger = new Logger();
     async signUp(request, response): Promise<string> {
         const req = request.body;
@@ -19,12 +19,12 @@ export class AuthService {
             .from(User, "user")
             .where("user.name = :name", { name: req.name })
             .getOne();
-        if(check){
+        if (check) {
             this.logger.log("Same name is already exist!");
             throw new BadRequestException();
         }
         if (!check) {
-            if(!req.password){
+            if (!req.password) {
                 this.logger.log("Password is not exits!");
                 throw new BadRequestException();
             }
@@ -83,7 +83,7 @@ export class AuthService {
             .where("user.uid = :uid", { uid: data.id })
             .getOne();
         console.log(req, data, user);
-        if(user.password !== req.password){
+        if (user.password !== req.password) {
             throw new BadRequestException();
         } else {
             await getConnection()
@@ -97,7 +97,18 @@ export class AuthService {
                     this.logger.log(`Fail to delete posts`);
                     throw new BadRequestException(`Fail to delete posts User: ${data.name}`);
                 });
-            this.logger.log(`Success to drop out User: ${data.name}`);
+            this.logger.log(`Success to delete posts User: ${data.name}`);
+            await getConnection()
+                .createQueryBuilder()
+                .delete()
+                .from(User, 'user')
+                .where("user.uid = :uid", { uid: data.id })
+                .execute()
+                .catch(Error => {
+                    console.log(Error);
+                    this.logger.log(`Fail to drop out User: ${data.name}`);
+                    throw new BadRequestException(`Fail to drop out User: ${data.name}`);
+                });
             return response.status(200).json({
                 status: 200,
                 message: 'Success to drop out'
