@@ -1,6 +1,6 @@
 module.exports = {
     apps: [{
-        name: 'MyBlog',
+        name: '30Days',
         script: 'yarn',
         args: 'start',
         interpreter: '/bin/bash',
