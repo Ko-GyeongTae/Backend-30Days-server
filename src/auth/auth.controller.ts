@@ -1,4 +1,4 @@
-import { Controller, Delete, Post, Req, Res } from '@nestjs/common';
+import { Controller, Delete, Get, Post, Req, Res } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { AuthService } from './auth.service';
 
@@ -29,5 +29,13 @@ export class AuthController {
         @Res() response: Response
     ): Promise<Object> {
         return this.authService.dropOut(request, response);
+    }
+
+    @Get('logout')
+    signOut(
+        @Req() request: Request,
+        @Res() response: Response
+    ): Promise<Object> {
+        return this.authService.logOut(request, response);
     }
 }

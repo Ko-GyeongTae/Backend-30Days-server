@@ -12,10 +12,10 @@ export class DiaryService {
     async getDiary(request, response): Promise<object> {
         try {
             const cookie = request.cookies['jwt'];
-            const data = await this.jwtService.verifyAsync(cookie);
-            if (!data) {
+            if (!cookie) {
                 throw new UnauthorizedException();
             }
+            const data = await this.jwtService.verifyAsync(cookie);
             const diary = await getConnection()
                 .createQueryBuilder()
                 .select('post')

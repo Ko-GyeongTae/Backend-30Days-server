@@ -71,10 +71,10 @@ export class AuthService {
     async dropOut(request, response): Promise<Object> {
         const req = request.body;
         const cookie = request.cookies['jwt'];
-        const data = await this.jwtService.verifyAsync(cookie);
-        if (!data) {
+        if (!cookie) {
             throw new UnauthorizedException();
         }
+        const data = await this.jwtService.verifyAsync(cookie);
         const user = await getConnection()
             .createQueryBuilder()
             .select("user")
@@ -113,6 +113,21 @@ export class AuthService {
                 message: 'Success to drop out'
             });
         }
+    }
+
+    async logOut(request, response): Promise<Object> {
+        const cookie = request.cookies['jwt'];
+        if (!cookie) {
+            this.logger.log(`Fail to logout`);
+            throw new UnauthorizedException();
+        }
+        const data = await this.jwtService.verifyAsync(cookie);
+        response.clearCookie('jwt');
+        this.logger.log(`Success to logout User: ${data.name}`);
+        return response.status(200).json({
+            status: 200,
+            message: 'Success to logout'
+        });
     }
 }
 
