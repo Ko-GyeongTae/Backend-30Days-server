@@ -4,7 +4,6 @@ import { Post } from 'src/entity/Diary';
 import { getConnection } from 'typeorm';
 import { User } from '../entity/User';
 
-
 @Injectable()
 export class AuthService {
     constructor(
@@ -82,7 +81,6 @@ export class AuthService {
             .from(User, "user")
             .where("user.uid = :uid", { uid: data.id })
             .getOne();
-        console.log(req, data, user);
         if (user.password !== req.password) {
             throw new BadRequestException();
         } else {
@@ -109,6 +107,7 @@ export class AuthService {
                     this.logger.log(`Fail to drop out User: ${data.name}`);
                     throw new BadRequestException(`Fail to drop out User: ${data.name}`);
                 });
+                response.clearCookie('jwt');
             return response.status(200).json({
                 status: 200,
                 message: 'Success to drop out'

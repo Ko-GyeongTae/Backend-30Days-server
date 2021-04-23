@@ -23,6 +23,7 @@ export class DiaryService {
                 .where('post.userUid = :userUid', { userUid: data.id })
                 .getMany();
             if (diary.length === 0) {
+                this.logger.log(`Fail to get list User: ${data.name}`);
                 throw new NotFoundException();
             }
             this.logger.log(`Success to get list User: ${data.name}`);
@@ -32,7 +33,8 @@ export class DiaryService {
                 data: diary
             });
         } catch (e) {
-            throw new NotFoundException();
+            this.logger.log(`Cannot find token`);
+            throw new UnauthorizedException();
         }
     }
 
