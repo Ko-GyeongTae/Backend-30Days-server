@@ -1,4 +1,4 @@
-import { HttpException, Injectable, Logger, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { getConnection } from 'typeorm';
 import { Post } from '../entity/Diary';
@@ -47,12 +47,12 @@ export class DiaryService {
             .createQueryBuilder()
             .insert()
             .into(Post)
-            .values({ userUid: data.id, title: req.title, content: req.content })
+            .values({ title: req.title, content: req.content })
             .execute()
             .catch(Error => {
                 console.log(Error);
                 this.logger.log(`Fail to write Diary`);
-                throw new HttpException(`Fail to write Diary`, 400);
+                throw new BadRequestException(`Fail to write Diary`);
             });
         this.logger.log(`Success to write Diary Title: ${req.title}`);
         return response.status(201).json({

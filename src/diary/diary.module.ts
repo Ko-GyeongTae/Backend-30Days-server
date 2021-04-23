@@ -11,6 +11,7 @@ import { DiaryService } from './diary.service';
     })
   ],
   controllers: [DiaryController],
-  providers: [DiaryService]
+  providers: [DiaryService],
+  exports: [DiaryService]
 })
 export class DiaryModule {}

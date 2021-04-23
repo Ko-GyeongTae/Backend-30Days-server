@@ -1,4 +1,5 @@
-import {Entity, PrimaryGeneratedColumn, Column} from "typeorm";
+import {Entity, PrimaryGeneratedColumn, Column, OneToMany} from "typeorm";
+import { Post } from "./Diary";
 
 @Entity()
 export class User {
@@ -11,4 +12,7 @@ export class User {
 
   @Column()
   password: string;
+
+  @OneToMany(type => Post, post => post.user)
+  posts: Post[];
 }
