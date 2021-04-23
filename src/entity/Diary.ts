@@ -7,8 +7,14 @@ export class Post {
   @PrimaryGeneratedColumn('uuid')
   postUid: string;
 
-  @ManyToOne(type => User, user => user.posts)
-  user: User;
+  @ManyToOne(
+    (type) => User,
+    (user) => user.posts, {nullable: true, onDelete: 'CASCADE'}
+  )
+  user!: User;
+
+  @Column()
+  userUid: string;
 
   @Column()
   title: string;

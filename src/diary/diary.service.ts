@@ -47,7 +47,7 @@ export class DiaryService {
             .createQueryBuilder()
             .insert()
             .into(Post)
-            .values({ title: req.title, content: req.content })
+            .values({ userUid: data.id, title: req.title, content: req.content })
             .execute()
             .catch(Error => {
                 console.log(Error);

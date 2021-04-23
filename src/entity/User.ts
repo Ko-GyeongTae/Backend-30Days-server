@@ -13,6 +13,10 @@ export class User {
   @Column()
   password: string;
 
-  @OneToMany(type => Post, post => post.user)
-  posts: Post[];
+  @OneToMany(
+    (type) => Post, 
+    (post) => post.user
+      
+  )
+  posts!: Post[];
 }
