@@ -23,17 +23,17 @@ export class DiaryService {
                 .where('post.userUid = :userUid', { userUid: data.id })
                 .getMany();
             if (diary.length === 0) {
-                this.logger.log(`Fail to get list User: ${data.name}`);
+                this.logger.log(`[Log] Fail to get list User: ${data.name}`);
                 throw new NotFoundException();
             }
-            this.logger.log(`Success to get list User: ${data.name}`);
+            this.logger.log(`[Log] Success to get list User: ${data.name}`);
             return response.status(200).json({
                 status: 200,
                 totalCount: diary.length,
                 data: diary
             });
         } catch (e) {
-            this.logger.log(`Cannot find token`);
+            this.logger.log(`[Log] Cannot find token`);
             throw new UnauthorizedException();
         }
     }
@@ -53,10 +53,10 @@ export class DiaryService {
             .execute()
             .catch(Error => {
                 console.log(Error);
-                this.logger.log(`Fail to write Diary`);
+                this.logger.log(`[Log] Fail to write Diary`);
                 throw new BadRequestException(`Fail to write Diary`);
             });
-        this.logger.log(`Success to write Diary Title: ${req.title}`);
+        this.logger.log(`[Log] Success to write Diary Title: ${req.title}`);
         return response.status(201).json({
             status: 201,
             message: 'Success to write Diary'

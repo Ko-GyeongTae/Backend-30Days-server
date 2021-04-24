@@ -19,12 +19,12 @@ export class AuthService {
             .where("user.name = :name", { name: req.name })
             .getOne();
         if (check) {
-            this.logger.log("Same name is already exist!");
+            this.logger.log("[Log] Same name is already exist!");
             throw new BadRequestException();
         }
         if (!check) {
             if (!req.password) {
-                this.logger.log("Password is not exits!");
+                this.logger.log("[Log] Password is not exits!");
                 throw new BadRequestException();
             }
             await getConnection()
@@ -34,10 +34,10 @@ export class AuthService {
                 .values({ name: req.name, password: req.password })
                 .execute()
                 .catch(Error => {
-                    this.logger.log(`Fail to signup User: ${req.name}`);
+                    this.logger.log(`[Log] Fail to signup User: ${req.name}`);
                     return new BadRequestException('Fail to signup');
                 });
-            this.logger.log(`Success to signup User: ${req.name}`);
+            this.logger.log(`[Log] Success to signup User: ${req.name}`);
             return response.status(200).json({
                 status: 200,
                 message: "Success to signup"
@@ -54,7 +54,7 @@ export class AuthService {
             .from(User, "user")
             .where("user.password = :password && user.name = :name", { password: req.password, name: req.name })
             .getOne();
-        this.logger.log(`${request.method} : ${request.url} : ${req.name}`);
+        this.logger.log(`[Log] ${request.method} : ${request.url} : ${req.name}`);
         if (!user) {
             throw new BadRequestException('invalid credentials');
         }
@@ -92,10 +92,10 @@ export class AuthService {
                 .execute()
                 .catch(Error => {
                     console.log(Error);
-                    this.logger.log(`Fail to delete posts`);
+                    this.logger.log(`[Log] Fail to delete posts`);
                     throw new BadRequestException(`Fail to delete posts User: ${data.name}`);
                 });
-            this.logger.log(`Success to delete posts User: ${data.name}`);
+            this.logger.log(`[Log] Success to delete posts User: ${data.name}`);
             await getConnection()
                 .createQueryBuilder()
                 .delete()
@@ -104,7 +104,7 @@ export class AuthService {
                 .execute()
                 .catch(Error => {
                     console.log(Error);
-                    this.logger.log(`Fail to drop out User: ${data.name}`);
+                    this.logger.log(`[Log] Fail to drop out User: ${data.name}`);
                     throw new BadRequestException(`Fail to drop out User: ${data.name}`);
                 });
                 response.clearCookie('jwt');
@@ -118,12 +118,12 @@ export class AuthService {
     async logOut(request, response): Promise<Object> {
         const cookie = request.cookies['jwt'];
         if (!cookie) {
-            this.logger.log(`Fail to logout`);
+            this.logger.log(`[Log] Fail to logout`);
             throw new UnauthorizedException();
         }
         const data = await this.jwtService.verifyAsync(cookie);
         response.clearCookie('jwt');
-        this.logger.log(`Success to logout User: ${data.name}`);
+        this.logger.log(`[Log] Success to logout User: ${data.name}`);
         return response.status(200).json({
             status: 200,
             message: 'Success to logout'
