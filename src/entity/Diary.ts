@@ -2,14 +2,14 @@ import {Entity, PrimaryGeneratedColumn, Column, ManyToOne} from "typeorm";
 import { User } from "./User";
 
 @Entity()
-export class Post {
+export class Diary {
 
   @PrimaryGeneratedColumn('uuid')
   postUid: string;
 
   @ManyToOne(
     (type) => User,
-    (user) => user.posts, {nullable: true, onDelete: 'CASCADE'}
+    (user) => user.Diaries, {nullable: true, onDelete: 'CASCADE'}
   )
   user!: User;
 

@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable, Logger, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { getConnection } from 'typeorm';
-import { Post } from '../entity/Diary';
+import { Diary } from '../entity/Diary';
 
 @Injectable()
 export class DiaryService {
@@ -18,9 +18,9 @@ export class DiaryService {
             const data = await this.jwtService.verifyAsync(cookie);
             const diary = await getConnection()
                 .createQueryBuilder()
-                .select('post')
-                .from(Post, 'post')
-                .where('post.userUid = :userUid', { userUid: data.id })
+                .select('Diary')
+                .from(Diary, 'Diary')
+                .where('Diary.userUid = :userUid', { userUid: data.id })
                 .getMany();
             if (diary.length === 0) {
                 this.logger.log(`[Log] Fail to get list User: ${data.name}`);
@@ -48,7 +48,7 @@ export class DiaryService {
         await getConnection()
             .createQueryBuilder()
             .insert()
-            .into(Post)
+            .into(Diary)
             .values({ userUid: data.id, title: req.title, content: req.content })
             .execute()
             .catch(Error => {

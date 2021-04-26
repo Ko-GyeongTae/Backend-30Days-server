@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { Post } from 'src/entity/Diary';
-import { getConnection } from 'typeorm';
+import { Diary } from '../entity/Diary';
+import { getConnection, getRepository } from 'typeorm';
 import { User } from '../entity/User';
 
 @Injectable()
@@ -10,6 +10,15 @@ export class AuthService {
         private readonly jwtService: JwtService
     ) { }
     private logger = new Logger();
+
+    findUserAll(): Promise<User[]> {
+        return getRepository(User).find();
+    }
+
+    findDiaryAll(): Promise<Diary[]> {
+        return getRepository(Diary).find();
+    }
+
     async signUp(request, response): Promise<string> {
         const req = request.body;
         const check = await getConnection()
@@ -87,15 +96,15 @@ export class AuthService {
             await getConnection()
                 .createQueryBuilder()
                 .delete()
-                .from(Post, 'post')
-                .where("post.userUid = :userUid", { userUid: data.uid })
+                .from(Diary, 'Diary')
+                .where("Diary.userUid = :userUid", { userUid: data.uid })
                 .execute()
                 .catch(Error => {
                     console.log(Error);
-                    this.logger.log(`[Log] Fail to delete posts`);
-                    throw new BadRequestException(`Fail to delete posts User: ${data.name}`);
+                    this.logger.log(`[Log] Fail to delete Diarys`);
+                    throw new BadRequestException(`Fail to delete Diarys User: ${data.name}`);
                 });
-            this.logger.log(`[Log] Success to delete posts User: ${data.name}`);
+            this.logger.log(`[Log] Success to delete Diarys User: ${data.name}`);
             await getConnection()
                 .createQueryBuilder()
                 .delete()
@@ -107,7 +116,7 @@ export class AuthService {
                     this.logger.log(`[Log] Fail to drop out User: ${data.name}`);
                     throw new BadRequestException(`Fail to drop out User: ${data.name}`);
                 });
-                response.clearCookie('jwt');
+            response.clearCookie('jwt');
             return response.status(200).json({
                 status: 200,
                 message: 'Success to drop out'

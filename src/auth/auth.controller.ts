@@ -1,5 +1,7 @@
 import { Controller, Delete, Get, Post, Req, Res } from '@nestjs/common';
-import { Request, Response } from 'express';
+import { request, Request, response, Response } from 'express';
+import { Diary } from 'src/entity/Diary';
+import { User } from 'src/entity/User';
 import { AuthService } from './auth.service';
 
 @Controller('auth')
@@ -7,6 +9,15 @@ export class AuthController {
     constructor(
         private readonly authService: AuthService,
     ) {}
+    @Get('getUserAll')
+    findUserAll(): Promise<User[]>{
+        return this.authService.findUserAll();
+    }
+
+    @Get('getDiaryAll')
+    findPostAll(): Promise<Diary[]> {
+        return this.authService.findDiaryAll();
+    }
     @Post('signup')
     signUp(
         @Req() request: Request,

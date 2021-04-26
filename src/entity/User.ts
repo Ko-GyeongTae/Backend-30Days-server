@@ -1,5 +1,5 @@
 import {Entity, PrimaryGeneratedColumn, Column, OneToMany} from "typeorm";
-import { Post } from "./Diary";
+import { Diary } from "./Diary";
 
 @Entity()
 export class User {
@@ -14,9 +14,9 @@ export class User {
   password: string;
 
   @OneToMany(
-    (type) => Post, 
-    (post) => post.user
+    (type) => Diary, 
+    (Diary) => Diary.user
       
   )
-  posts!: Post[];
+  Diaries!: Diary[];
 }
