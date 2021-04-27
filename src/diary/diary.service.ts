@@ -10,32 +10,27 @@ export class DiaryService {
     ) { }
     private logger = new Logger();
     async getDiary(request, response): Promise<object> {
-        try {
-            const cookie = request.cookies['jwt'];
-            if (!cookie) {
-                throw new UnauthorizedException();
-            }
-            const data = await this.jwtService.verifyAsync(cookie);
-            const diary = await getConnection()
-                .createQueryBuilder()
-                .select('Diary')
-                .from(Diary, 'Diary')
-                .where('Diary.userUid = :userUid', { userUid: data.id })
-                .getMany();
-            if (diary.length === 0) {
-                this.logger.log(`[Log] Fail to get list User: ${data.name}`);
-                throw new NotFoundException();
-            }
-            this.logger.log(`[Log] Success to get list User: ${data.name}`);
-            return response.status(200).json({
-                status: 200,
-                totalCount: diary.length,
-                data: diary
-            });
-        } catch (e) {
-            this.logger.log(`[Log] Cannot find token`);
+        const cookie = request.cookies['jwt'];
+        if (!cookie) {
             throw new UnauthorizedException();
         }
+        const data = await this.jwtService.verifyAsync(cookie);
+        const diary = await getConnection()
+            .createQueryBuilder()
+            .select('Diary')
+            .from(Diary, 'Diary')
+            .where('Diary.userUid = :userUid', { userUid: data.id })
+            .getMany();
+        if (diary.length === 0) {
+            this.logger.log(`[Log] Fail to get list User: ${data.name}`);
+            throw new NotFoundException();
+        }
+        this.logger.log(`[Log] Success to get list User: ${data.name}`);
+        return response.status(200).json({
+            status: 200,
+            totalCount: diary.length,
+            diarylist: diary
+        });
     }
 
     async writeDiary(request, response): Promise<string> {
