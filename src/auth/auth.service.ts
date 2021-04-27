@@ -1,8 +1,9 @@
 import { BadRequestException, Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { Diary } from '../entity/Diary';
 import { getConnection, getRepository } from 'typeorm';
+import { compare, hash } from 'bcrypt';
 import { User } from '../entity/User';
+import { Diary } from '../entity/Diary';
 
 @Injectable()
 export class AuthService {
@@ -40,7 +41,7 @@ export class AuthService {
                 .createQueryBuilder()
                 .insert()
                 .into(User)
-                .values({ name: req.name, password: req.password })
+                .values({ name: req.name, password: await hash(req.password, 10) })
                 .execute()
                 .catch(Error => {
                     this.logger.log(`[Log] Fail to signup User: ${req.name}`);
@@ -56,13 +57,13 @@ export class AuthService {
 
     async signIn(request, response): Promise<Object> {
         const req = request.body;
-
         const user = await getConnection()
             .createQueryBuilder()
             .select("user")
             .from(User, "user")
-            .where("user.password = :password && user.name = :name", { password: req.password, name: req.name })
+            .where("user.name = :name", { name: req.name })
             .getOne();
+        await this.verifyPassword(req.password, user.password);
         this.logger.log(`[Log] ${request.method} : ${request.url} : ${req.name}`);
         if (!user) {
             throw new BadRequestException('invalid credentials');
@@ -75,6 +76,17 @@ export class AuthService {
             access_token: jwt,
         });
 
+    }
+
+    private async verifyPassword(
+        plainPassword: string,
+        hashedPassword: string,
+    ) {
+        const isPasswordMatch = await compare(plainPassword, hashedPassword);
+        if (!isPasswordMatch) {
+            console.log(isPasswordMatch);
+            throw new BadRequestException();
+        }
     }
 
     async dropOut(request, response): Promise<Object> {
