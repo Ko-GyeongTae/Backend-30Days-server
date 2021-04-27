@@ -12,7 +12,7 @@ async function bootstrap() {
     credentials: true
   });
   app.use(cookieParser());
-  const connection = await createConnection({
+  await createConnection({
     type: "mysql",
     host: process.env.DB_HOST,
     port: 3306,
