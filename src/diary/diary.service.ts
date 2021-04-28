@@ -8,8 +8,9 @@ export class DiaryService {
     constructor(
         private readonly jwtService: JwtService
     ) { }
+    
     private logger = new Logger();
-    async getDiary(request, response): Promise<object> {
+    async getDiary(request, response): Promise<Object> {
         const cookie = request.cookies['jwt'];
         if (!cookie) {
             throw new UnauthorizedException();
