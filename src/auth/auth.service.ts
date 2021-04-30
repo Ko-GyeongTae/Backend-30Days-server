@@ -57,6 +57,10 @@ export class AuthService {
 
     async signIn(request, response): Promise<Object> {
         const req = request.body;
+        if(!req.name || !req.password){
+            this.logger.log(`[Log] Undefined Name or Password`);
+            throw new BadRequestException();
+        }
         const user = await getConnection()
             .createQueryBuilder()
             .select("user")
@@ -93,6 +97,7 @@ export class AuthService {
         const req = request.body;
         const cookie = request.cookies['jwt'];
         if (!cookie) {
+            this.logger.log(`[Log] Undefined cookie`);
             throw new UnauthorizedException();
         }
         const data = await this.jwtService.verifyAsync(cookie);
