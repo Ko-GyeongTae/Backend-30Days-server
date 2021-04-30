@@ -21,6 +21,7 @@ export class DiaryService {
             .select('Diary')
             .from(Diary, 'Diary')
             .where('Diary.userUid = :userUid', { userUid: data.id })
+            .orderBy('Diary.date', "DESC")
             .getMany();
         if (diary.length === 0) {
             this.logger.log(`[Log] Fail to get list User: ${data.name}`);
