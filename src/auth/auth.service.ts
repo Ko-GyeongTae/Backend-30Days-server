@@ -23,9 +23,11 @@ export class AuthService {
     async getProfile(request, response): Promise<object> {
         const cookie = request.cookies['jwt'];
         if(!cookie){
+            this.logger.log("[Log] Cannot find cookie");
             throw new UnauthorizedException();
         }
         const data = await this.jwtService.verifyAsync(cookie);
+        this.logger.log(`[Log] ${data.name} is search myprofile`);
         return response.status(200).json({
             status: 200,
             myProfile: data
