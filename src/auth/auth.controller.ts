@@ -18,6 +18,15 @@ export class AuthController {
     findPostAll(): Promise<Diary[]> {
         return this.authService.findDiaryAll();
     }
+
+    @Get('myprofile')
+    myProfile(
+        @Req() request: Request,
+        @Res() response: Response
+    ): Promise<object> {
+        return this.authService.getProfile(request, response);
+    }
+
     @Post('signup')
     signUp(
         @Req() request: Request,

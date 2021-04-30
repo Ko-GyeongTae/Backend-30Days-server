@@ -20,6 +20,18 @@ export class AuthService {
         return getRepository(Diary).find();
     }
 
+    async getProfile(request, response): Promise<object> {
+        const cookie = request.cookies['jwt'];
+        if(!cookie){
+            throw new UnauthorizedException();
+        }
+        const data = await this.jwtService.verifyAsync(cookie);
+        return response.status(200).json({
+            status: 200,
+            myProfile: data
+        });
+    }
+
     async signUp(request, response): Promise<string> {
         const req = request.body;
         const check = await getConnection()
