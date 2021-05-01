@@ -1,16 +1,17 @@
-import { Controller, Delete, Get, Post, Req, Res } from '@nestjs/common';
+import { Controller, Delete, Get, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { request, Request, response, Response } from 'express';
 import { Diary } from 'src/entity/Diary';
 import { User } from 'src/entity/User';
 import { AuthService } from './auth.service';
+import { JwtAuthGuard, LocalAuthGuard } from './local-auth.guard';
 
 @Controller('auth')
 export class AuthController {
     constructor(
         private readonly authService: AuthService,
-    ) {}
+    ) { }
     @Get('getUserAll')
-    findUserAll(): Promise<User[]>{
+    findUserAll(): Promise<User[]> {
         return this.authService.findUserAll();
     }
 
@@ -33,6 +34,18 @@ export class AuthController {
         @Res() response: Response
     ): Promise<string> {
         return this.authService.signUp(request, response);
+    }
+
+    @UseGuards(LocalAuthGuard)
+    @Post('loginmiddle')
+    async login(@Req() req){
+        return this.authService.login(req.user);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Get('profile')
+    getProfile(@Req() req){
+        return req.user;
     }
 
     @Post('login')

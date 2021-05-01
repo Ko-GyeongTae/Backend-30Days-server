@@ -34,6 +34,19 @@ export class AuthService {
         });
     }
 
+    async validateUser(username: string, password: string): Promise<any> {
+        const user = await getConnection()
+            .createQueryBuilder()
+            .select("user")
+            .from(User, "user")
+            .where("user.name = :name", { name: username })
+            .getOne();
+        if(user && user.password === password){
+            const { password, ...result } = user;
+            return result;
+        }
+        return null;
+    }
     async signUp(request, response): Promise<string> {
         const req = request.body;
         const check = await getConnection()
@@ -67,6 +80,13 @@ export class AuthService {
                 message: "Success to signup"
             })
         }
+    }
+
+    async login(user: any){
+        const payload = { username: user.username, su: user.userId };
+        return {
+            access_token: this.jwtService.sign(payload),
+        };
     }
 
     async signIn(request, response): Promise<Object> {
