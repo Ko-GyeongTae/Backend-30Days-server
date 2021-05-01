@@ -1,7 +1,7 @@
 module.exports = {
     apps: [{
         name: '30Days',
-        script: 'dist/main.js',
+        script: '/dist/main.js',
         args: 'one two',
         instances: 1,
         autorestart: true,
