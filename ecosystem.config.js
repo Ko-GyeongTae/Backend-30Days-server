@@ -2,11 +2,9 @@ module.exports = {
     apps: [{
         name: '30Days',
         script: '/dist/main.js',
-        args: 'one two',
         instances: 1,
         autorestart: true,
         watch: false,
-        max_memory_restart: '1G',
         env: {
             NODE_ENV: 'production'
         }
