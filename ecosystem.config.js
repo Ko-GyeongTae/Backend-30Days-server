@@ -1,8 +1,8 @@
 module.exports = {
     apps: [{
         name: '30Days',
-        script: 'yarn',//'dist/main.js',
-        args: 'start', //'one two',
+        script: 'dist/main.js',
+        args: 'one two',
         instances: 1,
         autorestart: true,
         watch: false,
