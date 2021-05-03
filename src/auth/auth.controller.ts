@@ -10,6 +10,7 @@ export class AuthController {
     constructor(
         private readonly authService: AuthService,
     ) { }
+
     @Get('getUserAll')
     findUserAll(): Promise<User[]> {
         return this.authService.findUserAll();
@@ -36,18 +37,6 @@ export class AuthController {
         return this.authService.signUp(request, response);
     }
 
-    @UseGuards(LocalAuthGuard)
-    @Post('loginmiddle')
-    async login(@Req() req){
-        return this.authService.login(req.user);
-    }
-
-    @UseGuards(JwtAuthGuard)
-    @Get('profile')
-    getProfile(@Req() req){
-        return req.user;
-    }
-
     @Post('login')
     signIn(
         @Req() request: Request,
@@ -70,5 +59,17 @@ export class AuthController {
         @Res() response: Response
     ): Promise<Object> {
         return this.authService.logOut(request, response);
+    }
+
+    @UseGuards(LocalAuthGuard)
+    @Post('middle')
+    login(@Req() req) {
+        return this.authService.login(req.user);
+    }
+    
+    @UseGuards(JwtAuthGuard)
+    @Get('profile')
+    getProfile(@Req() req) {
+        return req.user;
     }
 }

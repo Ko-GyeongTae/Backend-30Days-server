@@ -22,7 +22,7 @@ export class AuthService {
 
     async getProfile(request, response): Promise<object> {
         const cookie = request.cookies['jwt'];
-        if(!cookie){
+        if (!cookie) {
             this.logger.log("[Log] Cannot find cookie");
             throw new UnauthorizedException();
         }
@@ -41,7 +41,7 @@ export class AuthService {
             .from(User, "user")
             .where("user.name = :name", { name: username })
             .getOne();
-        if(user && user.password === password){
+        if (user && user.password === password) {
             const { password, ...result } = user;
             return result;
         }
@@ -82,16 +82,10 @@ export class AuthService {
         }
     }
 
-    async login(user: any){
-        const payload = { username: user.username, su: user.userId };
-        return {
-            access_token: this.jwtService.sign(payload),
-        };
-    }
 
     async signIn(request, response): Promise<Object> {
         const req = request.body;
-        if(!req.name || !req.password){
+        if (!req.name || !req.password) {
             this.logger.log(`[Log] Undefined Name or Password`);
             throw new BadRequestException();
         }
@@ -188,6 +182,14 @@ export class AuthService {
             status: 200,
             message: 'Success to logout'
         });
+    }
+    
+    async login(user: any) {
+        const payload = { username: user.username, su: user.userId };
+        console.log(user);
+        return {
+            access_token: this.jwtService.sign(payload),
+        };
     }
 }
 
