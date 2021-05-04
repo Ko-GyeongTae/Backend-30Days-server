@@ -4,8 +4,8 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import * as dotenv from 'dotenv';
 import { PassportModule } from '@nestjs/passport';
-import { LocalStrategy } from './local.strategy';
-import { JwtStrategy } from './jwt.strategy';
+import { LocalStrategy } from '../middleware/local.strategy';
+import { JwtStrategy } from '../middleware/jwt.strategy';
 dotenv.config();
 
 @Module({
