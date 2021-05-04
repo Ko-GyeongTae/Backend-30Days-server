@@ -34,19 +34,6 @@ export class AuthService {
         });
     }
 
-    async validateUser(username: string, password: string): Promise<any> {
-        const user = await getConnection()
-            .createQueryBuilder()
-            .select("user")
-            .from(User, "user")
-            .where("user.name = :name", { name: username })
-            .getOne();
-        if (user && user.password === password) {
-            const { password, ...result } = user;
-            return result;
-        }
-        return null;
-    }
     async signUp(request, response): Promise<string> {
         const req = request.body;
         const check = await getConnection()
@@ -169,6 +156,21 @@ export class AuthService {
         }
     }
 
+    async validateUser(username: string, password: string): Promise<any> {
+        const user = await getConnection()
+            .createQueryBuilder()
+            .select("user")
+            .from(User, "user")
+            .where("user.name = :name", { name: username })
+            .getOne();
+        if (user && user.password === password) {
+            const { password, ...result } = user;
+            console.log(result);
+            return result;
+        }
+        return null;
+    }
+    
     async logOut(request, response): Promise<Object> {
         const cookie = request.cookies['jwt'];
         if (!cookie) {

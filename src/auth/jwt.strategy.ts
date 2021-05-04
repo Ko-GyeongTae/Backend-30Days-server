@@ -13,10 +13,11 @@ export class JwtStrategy extends PassportStrategy(Strategy){
             ignoreExpiration: false,
             secretOrKey: process.env.JWT_SECRET,
         });
-        console.log(process.env.JWT_SECRET);
+        console.log('jwtstrategy - constructor is run');
     }
 
     async validate(payload: any){
+        console.log('jwt.strategy validate is run');
         return { userId: payload.sub, username: payload.username };
     }
 }
