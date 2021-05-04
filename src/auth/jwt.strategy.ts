@@ -4,7 +4,7 @@ import { ExtractJwt, Strategy } from "passport-jwt";
 import * as dotenv from "dotenv";
 dotenv.config();
 
-@Injectable()
+@Injectable() //jwt 유효확인 middleware
 export class JwtStrategy extends PassportStrategy(Strategy){
     constructor() {
         super({
