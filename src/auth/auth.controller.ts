@@ -21,16 +21,6 @@ export class AuthController {
         return this.authService.findDiaryAll();
     }
 
-    @UseGuards(JwtAuthGuard)
-    @Get('myprofile')
-    myProfile(
-        @Req() request: Request,
-        @Res() response: Response
-    ): Promise<object> {
-        console.log(request.cookies);
-        return this.authService.getProfile(request, response);
-    }
-
     @Post('signup')
     signUp(
         @Req() request: Request,
@@ -39,6 +29,7 @@ export class AuthController {
         return this.authService.signUp(request, response);
     }
 
+    @UseGuards(LocalAuthGuard)
     @Post('login')
     signIn(
         @Req() request: Request,
@@ -47,6 +38,16 @@ export class AuthController {
         return this.authService.signIn(request, response);
     }
 
+    @UseGuards(JwtAuthGuard)
+    @Get('myprofile')
+    myProfile(
+        @Req() request: Request,
+        @Res() response: Response
+    ): Promise<object> {
+        return this.authService.getProfile(request, response);
+    }
+
+    @UseGuards(JwtAuthGuard)
     @Delete('drop')
     dropOut(
         @Req() request: Request,
@@ -55,24 +56,12 @@ export class AuthController {
         return this.authService.dropOut(request, response);
     }
 
+    @UseGuards(JwtAuthGuard)
     @Get('logout')
     signOut(
         @Req() request: Request,
         @Res() response: Response
     ): Promise<Object> {
         return this.authService.logOut(request, response);
-    }
-
-    @UseGuards(LocalAuthGuard)
-    @Post('middle')
-    login(@Req() req) {
-        return this.authService.login(req.user);
-    }
-    
-    @UseGuards(JwtAuthGuard)
-    @Get('profile')
-    getProfile(@Req() req) {
-        //console.log(req);
-        return 'profile';
     }
 }

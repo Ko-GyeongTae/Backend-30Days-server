@@ -5,13 +5,13 @@ import { DiaryService } from './diary.service';
 
 @Module({
   imports: [
-    JwtModule.register({ 
-      secret: 'secret',
-      signOptions: {expiresIn: '3h'} 
-    })
+    JwtModule.register({
+      secret: process.env.JWT_SECRET,
+      signOptions: { expiresIn: '30s' }
+    }),
   ],
   controllers: [DiaryController],
   providers: [DiaryService],
   exports: [DiaryService]
 })
-export class DiaryModule {}
+export class DiaryModule { }

@@ -170,7 +170,7 @@ export class AuthService {
         }
         return null;
     }
-    
+
     async logOut(request, response): Promise<Object> {
         const cookie = request.cookies['jwt'];
         if (!cookie) {
@@ -184,14 +184,6 @@ export class AuthService {
             status: 200,
             message: 'Success to logout'
         });
-    }
-    
-    async login(user: any) {
-        const payload = { username: user.username, su: user.userId };
-        console.log(user);
-        return {
-            access_token: this.jwtService.sign(payload),
-        };
     }
 }
 
