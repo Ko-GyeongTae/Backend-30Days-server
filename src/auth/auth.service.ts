@@ -103,7 +103,6 @@ export class AuthService {
     ) {
         const isPasswordMatch = await compare(plainPassword, hashedPassword);
         if (!isPasswordMatch) {
-            console.log(isPasswordMatch);
             throw new BadRequestException();
         }
     }
@@ -156,16 +155,15 @@ export class AuthService {
         }
     }
 
-    async validateUser(username: string, password: string): Promise<any> {
+    async validateUser(name: string, password: string): Promise<any> {
         const user = await getConnection()
             .createQueryBuilder()
             .select("user")
             .from(User, "user")
-            .where("user.name = :name", { name: username })
+            .where("user.name = :name", { name: name })
             .getOne();
-        if (user && user.password === password) {
+        if (user && await compare(password, user.password)) {
             const { password, ...result } = user;
-            console.log(result);
             return result;
         }
         return null;

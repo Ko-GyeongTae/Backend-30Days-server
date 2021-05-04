@@ -1,18 +1,18 @@
-import { BadRequestException, Injectable } from "@nestjs/common";
+import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { PassportStrategy } from "@nestjs/passport";
 import { Strategy } from "passport-local";
 import { AuthService } from "../auth/auth.service";
 
-@Injectable() //회원정보 중복확인 middleware
+@Injectable() //회원정보 확인 middleware
 export class LocalStrategy extends PassportStrategy(Strategy) {
     constructor(private authService: AuthService){
         super({ usernameField: 'name' });
     }
     
-    async validate(username: string, password: string): Promise<any> {
-        const user = await this.authService.validateUser(username, password);
+    async validate(name: string, password: string): Promise<any> {
+        const user = await this.authService.validateUser(name, password);
         if(!user){
-            throw new BadRequestException();
+            throw new UnauthorizedException();
         }
         return user;
     }
