@@ -21,11 +21,13 @@ export class AuthController {
         return this.authService.findDiaryAll();
     }
 
+    @UseGuards(JwtAuthGuard)
     @Get('myprofile')
     myProfile(
         @Req() request: Request,
         @Res() response: Response
     ): Promise<object> {
+        console.log(request.cookies);
         return this.authService.getProfile(request, response);
     }
 
