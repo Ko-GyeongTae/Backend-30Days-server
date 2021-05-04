@@ -3,7 +3,7 @@ import { request, Request, response, Response } from 'express';
 import { Diary } from 'src/entity/Diary';
 import { User } from 'src/entity/User';
 import { AuthService } from './auth.service';
-import { JwtAuthGuard, LocalAuthGuard } from './local-auth.guard';
+import { JwtAuthGuard, LocalAuthGuard } from '../middleware/local-auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -56,7 +56,6 @@ export class AuthController {
         return this.authService.dropOut(request, response);
     }
 
-    @UseGuards(JwtAuthGuard)
     @Get('logout')
     signOut(
         @Req() request: Request,
