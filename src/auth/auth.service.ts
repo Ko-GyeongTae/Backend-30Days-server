@@ -113,38 +113,36 @@ export class AuthService {
             .from(User, "user")
             .where("user.uid = :uid", { uid: data.id })
             .getOne();
-        if (user.password !== req.password) {
-            throw new BadRequestException();
-        } else {
-            await getConnection()
-                .createQueryBuilder()
-                .delete()
-                .from(Diary, 'Diary')
-                .where("Diary.userUid = :userUid", { userUid: data.uid })
-                .execute()
-                .catch(Error => {
-                    console.log(Error);
-                    this.logger.log(`[Log] Fail to delete Diarys`);
-                    throw new BadRequestException(`Fail to delete Diarys User: ${data.name}`);
-                });
-            this.logger.log(`[Log] Success to delete Diarys User: ${data.name}`);
-            await getConnection()
-                .createQueryBuilder()
-                .delete()
-                .from(User, 'user')
-                .where("user.uid = :uid", { uid: data.id })
-                .execute()
-                .catch(Error => {
-                    console.log(Error);
-                    this.logger.log(`[Log] Fail to drop out User: ${data.name}`);
-                    throw new BadRequestException(`Fail to drop out User: ${data.name}`);
-                });
-            response.clearCookie('jwt');
-            return response.status(200).json({
-                status: 200,
-                message: 'Success to drop out'
+
+        await getConnection()
+            .createQueryBuilder()
+            .delete()
+            .from(Diary, 'Diary')
+            .where("Diary.userUid = :userUid", { userUid: data.uid })
+            .execute()
+            .catch(Error => {
+                console.log(Error);
+                this.logger.log(`[Log] Fail to delete Diarys`);
+                throw new BadRequestException(`Fail to delete Diarys User: ${data.name}`);
             });
-        }
+        this.logger.log(`[Log] Success to delete Diarys User: ${data.name}`);
+        await getConnection()
+            .createQueryBuilder()
+            .delete()
+            .from(User, 'user')
+            .where("user.uid = :uid", { uid: data.id })
+            .execute()
+            .catch(Error => {
+                console.log(Error);
+                this.logger.log(`[Log] Fail to drop out User: ${data.name}`);
+                throw new BadRequestException(`Fail to drop out User: ${data.name}`);
+            });
+        response.clearCookie('jwt');
+        return response.status(200).json({
+            status: 200,
+            message: 'Success to drop out'
+        });
+
     }
 
     async validateUser(name: string, password: string): Promise<any> {
