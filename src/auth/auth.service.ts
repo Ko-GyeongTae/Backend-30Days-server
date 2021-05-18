@@ -104,16 +104,9 @@ export class AuthService {
     }
 
     async dropOut(request, response): Promise<Object> {
-        const req = request.body;
         const cookie = request.cookies['jwt'];
         const data = await this.jwtService.verifyAsync(cookie);
-        const user = await getConnection()
-            .createQueryBuilder()
-            .select("user")
-            .from(User, "user")
-            .where("user.uid = :uid", { uid: data.id })
-            .getOne();
-
+        this.logger.log(`[Log] ${data.name} request to DropData`);
         await getConnection()
             .createQueryBuilder()
             .delete()
