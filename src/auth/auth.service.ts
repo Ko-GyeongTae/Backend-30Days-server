@@ -107,7 +107,7 @@ export class AuthService {
         const cookie = request.cookies['jwt'];
         const data = await this.jwtService.verifyAsync(cookie);
         this.logger.log(`[Log] ${data.name} request to DropData`);
-        await getConnection()
+        /*await getConnection()
             .createQueryBuilder()
             .delete()
             .from(Diary, 'Diary')
@@ -118,7 +118,7 @@ export class AuthService {
                 this.logger.log(`[Log] Fail to delete Diarys`);
                 throw new BadRequestException(`Fail to delete Diarys User: ${data.name}`);
             });
-        this.logger.log(`[Log] Success to delete Diarys User: ${data.name}`);
+        this.logger.log(`[Log] Success to delete Diarys User: ${data.name}`);*/
         await getConnection()
             .createQueryBuilder()
             .delete()
