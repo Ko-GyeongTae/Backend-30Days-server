@@ -130,6 +130,7 @@ export class AuthService {
                 this.logger.log(`[Log] Fail to drop out User: ${data.name}`);
                 throw new BadRequestException(`Fail to drop out User: ${data.name}`);
             });
+            this.logger.log(`[Log] Success to Dro[] User: ${data.name}`);
         response.clearCookie('jwt');
         return response.status(200).json({
             status: 200,
