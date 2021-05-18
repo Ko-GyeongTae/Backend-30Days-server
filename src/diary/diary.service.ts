@@ -23,10 +23,7 @@ export class DiaryService {
             .where('Diary.userUid = :userUid', { userUid: data.id })
             .orderBy('Diary.date', "DESC")
             .getMany();
-        if (diary.length === 0) {
-            this.logger.log(`[Log] Fail to get list User: ${data.name}`);
-            throw new NotFoundException();
-        }
+        
         this.logger.log(`[Log] Success to get list User: ${data.name}`);
         return response.status(200).json({
             status: 200,
