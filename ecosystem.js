@@ -1,14 +1,15 @@
 module.exports = {
-    apps: [{
-        name: '30Days',
-        script: '/dist/main.js',
-        instances: 1,
-        autorestart: true,
-        watch: false,
-        env: {
-            NODE_ENV: 'production'
+    "apps": [
+        {
+            "args": "node ./build/main.js",
+            "exec_mode": "cluster",
+            "instances": 1,
+            "interpreter": "bash",
+            "name": "30Days-App-Server",
+            "script": "yarn",
+            "time": true
         }
-    }],
+    ],
 
     deploy: {
         production: {
