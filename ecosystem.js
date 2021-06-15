@@ -1,7 +1,7 @@
 module.exports = {
     "apps": [
         {
-            "args": "node ./build/main.js",
+            "args": "node ./dist/main.js",
             "exec_mode": "cluster",
             "instances": 1,
             "interpreter": "bash",
