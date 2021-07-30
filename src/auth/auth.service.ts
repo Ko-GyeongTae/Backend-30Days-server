@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, Logger, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { getConnection, getRepository } from 'typeorm';
 import { compare, hash } from 'bcrypt';
@@ -99,7 +99,7 @@ export class AuthService {
     ) {
         const isPasswordMatch = await compare(plainPassword, hashedPassword);
         if (!isPasswordMatch) {
-            throw new BadRequestException();
+            throw new ForbiddenException();
         }
     }
 
@@ -136,7 +136,6 @@ export class AuthService {
             status: 200,
             message: 'Success to drop out'
         });
-
     }
 
     async validateUser(name: string, password: string): Promise<any> {
